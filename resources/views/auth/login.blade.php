@@ -31,7 +31,7 @@
                 <div class="register-link  mt-1">
                     <div class="row">
                         <div class="col-lg-6"><a  href="{{ route('register') }}"> Student Sign Up</a></p></div>
-                        <div class="col-lg-6 "><a class=" pull-right" href="{{ route('register') }}"> Tutor Sign Up</a></p></div>
+                        <div class="col-lg-6 "><a class=" pull-right" href="{{ route('tutor-registration') }}"> Tutor Sign Up</a></p></div>
                     </div>
                 </div>
             </form>

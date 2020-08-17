@@ -108,16 +108,17 @@ class CategorySeeder extends Seeder
         DB::transaction(function() use ($categoryItems) {
             if( count($categoryItems) > 0 ){
                 foreach ($categoryItems as $categoryItem) {
-
-                    $category = Category::where('name', '=', $categoryItem['name'])->first();
+                    $category = Category::where('name',  $categoryItem['name'])->first();
                     if ( is_null($category) ){
-                        $category = Category::create($categoryItem);
+                        $category = Category::create(['name'=>$categoryItem['name'],'description'=>$categoryItem['description']]);
                     }
                     if ( !is_null($category) ){
                         if( count($categoryItem['sub_categories']) > 0 ){
                             foreach ( $categoryItem['sub_categories'] as $subCategoryItem ){
                                 $subCategoryItem['category_id'] = $category['id'];
-                                SubCategory::create($subCategoryItem);
+                                $subCategory = SubCategory::where('name',  $subCategoryItem['name'])->where('category_id',$category['id'])->first();
+                                if( is_null($subCategory) )
+                                    SubCategory::create($subCategoryItem);
                             }
                         }
                     }

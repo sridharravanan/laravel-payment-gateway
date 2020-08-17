@@ -29,7 +29,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="col col-md-12">
-                        <label>Phone address</label>
+                        <label>Phone Number</label>
                         <div class="input-group">
                             <div class="input-group-btn"><button class="btn btn-primary">+91</button></div>
                             <input type="text" id="input3-group2"  placeholder="Phone Number" class="form-control @error('phone_number') is-invalid @enderror" name="phone_number" value="{{ old('phone_number') }}" required autocomplete="phone_number">

@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', 'HomeController@index');
+Route::get('/tutor-registration', 'Auth\RegisterController@tutorRegistration')->name('tutor-registration');
+Route::post('/tutor-save', 'Auth\RegisterController@tutorSave')->name('tutor-save');
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
@@ -50,12 +52,7 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:4', 'confirmed'],
-            'phone_number' => ['required', 'numeric','digits:10', 'unique:users'],
-        ]);
+        return Validator::make($data, User::rule());
     }
 
     /**
@@ -71,5 +68,20 @@ class RegisterController extends Controller
         $role = config('roles.models.role')::where('slug', '=', Config::get('constants.role.slug_student.slug'))->first();
         $user->attachRole($role);
         return $user;
+    }
+    public function tutorRegistration(){
+        return view('auth.tutor_registration');
+    }
+    public function tutorSave(Request $request){
+        $request->validate(User::rule());
+        $message = DB::transaction(function() use ($request) {
+            $data = $request->all();
+            $data['password'] = Hash::make($data['password']);
+            $user =  User::create($data);
+            $role = config('roles.models.role')::where('slug', '=', Config::get('constants.role.slug_tutor.slug'))->first();
+            $user->attachRole($role);
+            return $user['name']." tutor has been created";
+        });
+        return response()->json($message, 200);
     }
 }

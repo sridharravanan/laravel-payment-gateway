@@ -21,6 +21,23 @@ window.Vue = require('vue');
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
+//#block for include vue js.
+//#tutor...!
+require('./components/tutor/form-tutor');
+
+//global declaration
+import 'vue-snotify/styles/material.css'
+import Vue from 'vue'
+import Snotify, { SnotifyPosition } from 'vue-snotify';
+
+const options = {
+    toast: {
+        position: SnotifyPosition.rightTop
+    },
+    timeout: 5000
+}
+
+Vue.use(Snotify, options);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

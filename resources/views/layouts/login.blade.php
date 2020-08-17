@@ -12,6 +12,7 @@
     </head>
     <body class="bg-dark">
         <div  id="app" class="sufee-login d-flex align-content-center flex-wrap">
+            <vue-snotify></vue-snotify>
             @yield('content')
         </div>
         @include('includes.footer')

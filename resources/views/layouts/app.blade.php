@@ -11,19 +11,18 @@
             @include('includes.head')
         </head>
     <body>
-        <div id="app">
-            @include('includes.sidebar')
-            <!-- Right Panel -->
-            <div id="right-panel" class="right-panel">
-
-
+        @include('includes.sidebar')
+        <!-- Right Panel -->
+        <div id="right-panel" class="right-panel">
+            <!--vue js mounted..!-->
+            <div id="app">
                 @include('includes.top_bar')
                 @yield('content')
-                
-                <!-- .content -->
             </div>
-            <!-- Right Panel -->
+            <!-- .content -->
         </div>
+        <!-- Right Panel -->
+
         @stack('scripts')
         @include('includes.footer')
     </body>
