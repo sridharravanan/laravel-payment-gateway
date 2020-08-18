@@ -4,7 +4,7 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-/*require('./bootstrap');*/
+require('./bootstrap');
 
 window.Vue = require('vue');
 
@@ -24,6 +24,8 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 //#block for include vue js.
 //#tutor...!
 require('./components/tutor/form-tutor');
+//#category
+require('./components/category/manage-category');
 
 //global declaration
 import 'vue-snotify/styles/material.css'

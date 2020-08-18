@@ -6,6 +6,8 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
+// custom css...!
+//#page loader css
 .page-loader-wrappe {
     opacity: 0;
     transition: .3s ease-in 1s;
@@ -28,4 +30,9 @@
     top: calc(50% - 30px);
 }
 
-
+//#vue table css
+.pagination-active{
+    background-color:  #272c33 !important;
+    border-color: #272c33 !important;
+    color: #fff !important;
+}

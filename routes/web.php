@@ -17,5 +17,10 @@ Route::get('/', 'HomeController@index');
 Route::get('/tutor-registration', 'Auth\RegisterController@tutorRegistration')->name('tutor-registration');
 Route::post('/tutor-save', 'Auth\RegisterController@tutorSave')->name('tutor-save');
 Auth::routes();
+Route::group([
+    'middleware' => 'auth:web'
+], function () {
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/category', 'CategoryController@index');
+});
 
-Route::get('/home', 'HomeController@index')->name('home');

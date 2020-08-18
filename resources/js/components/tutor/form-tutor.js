@@ -1,14 +1,16 @@
 /**
  * Created by sridhar on 17/8/20.
  */
-import {Form} from 'laravel-form-validation';
+import axios from 'axios';
 Vue.component('form-tutor', {
-    components:{},
+    components:{
+        axios
+    },
     data(){
         return {
             form : this.getFormData(),
             isLoading : false,
-            formErrors : new Form(),
+            errors: [],
         }
     },
     created(){
@@ -31,17 +33,19 @@ Vue.component('form-tutor', {
             };
         },
         showGrid(){
-            this.form = this.getFormData(); 
+            this.form = this.getFormData();
         },
         submit() {
             this.isLoading = true;
-            this.formErrors.post('/tutor-save', this.form)
+            axios.post('/tutor-save', {})
                 .then(response => {
+                    this.errors = [];
                     this.$snotify.success(response.name, 'saved!');
                     this.showGrid();
                 })
                 .catch(reason => {
                     this.$snotify.error(reason.message);
+                    this.errors = error.response.data.errors;
                 }).finally(response=>{
                     this.isLoading = false;
                 });

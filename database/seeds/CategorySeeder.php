@@ -14,7 +14,7 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        $categoryItems = [
+        /*$categoryItems = [
             [
                 'name'          => 'Novels',
                 'description'   => '',
@@ -99,10 +99,19 @@ class CategorySeeder extends Seeder
             ]
         ]
 
-        ];
+        ];*/
+        $categoryItems = [];
+        for ($i=0; $i < 100; $i++) {
+            $categoryItems[] = [
+                'name' => Str::random(10),
+                'description' => '',
+                'sub_categories' => [],
+            ];
+        }
+
 
         /*
-         * Add Role Items
+         * Add Category Items
          *
          */
         DB::transaction(function() use ($categoryItems) {

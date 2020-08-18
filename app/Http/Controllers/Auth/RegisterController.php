@@ -69,9 +69,18 @@ class RegisterController extends Controller
         $user->attachRole($role);
         return $user;
     }
+    /**
+     * Show the tutor registration.
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
     public function tutorRegistration(){
         return view('auth.tutor_registration');
     }
+    /**
+     *@param  \Illuminate\Http\Request  $request
+     *@return string $message
+     */
     public function tutorSave(Request $request){
         $request->validate(User::rule());
         $message = DB::transaction(function() use ($request) {
