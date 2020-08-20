@@ -88,7 +88,7 @@ return [
     | Default Seeds
     |--------------------------------------------------------------------------
     |
-    | These are the default package seeds. You can seed the package built
+    | These are the default package seeds. You can seed the package built   
     | in seeds without having to seed them. These seed directly from
     | the package. These are not the published seeds.
     |
