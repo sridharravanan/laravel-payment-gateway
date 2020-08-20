@@ -25,6 +25,15 @@
         "vuetable-2": "^1.7.5"
     },
     "dependencies": {
-        "vue-snotify": "^3.2.1"
+        "filepond": "^4.19.2",
+        "filepond-plugin-file-validate-type": "^1.2.5",
+        "filepond-plugin-image-crop": "^2.0.4",
+        "filepond-plugin-image-preview": "^4.6.4",
+        "laravel-form-validation": "^1.1.2",
+        "sweetalert": "^2.1.2",
+        "vue-filepond": "^6.0.2",
+        "vue-multiselect": "^2.1.6",
+        "vue-snotify": "^3.2.1",
+        "vue2-editor": "^2.10.2"
     }
 }

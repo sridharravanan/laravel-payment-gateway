@@ -22,12 +22,17 @@ window.Vue = require('vue');
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 //#block for include vue js.
-//#tutor...!
+//#tutor
 require('./components/tutor/form-tutor');
 //#category
 require('./components/category/manage-category');
+//#post
+require('./components/post/manage-post');
+require('./components/post/form-post');
+
 
 //global declaration
+import swal from 'sweetalert';
 import 'vue-snotify/styles/material.css'
 import Vue from 'vue'
 import Snotify, { SnotifyPosition } from 'vue-snotify';

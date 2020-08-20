@@ -43,8 +43,8 @@ Vue.component('form-tutor', {
                     this.$snotify.success(response.name, 'saved!');
                     this.showGrid();
                 })
-                .catch(reason => {
-                    this.$snotify.error(reason.message);
+                .catch(error => {
+                    this.$snotify.error(error.message);
                     this.errors = error.response.data.errors;
                 }).finally(response=>{
                     this.isLoading = false;

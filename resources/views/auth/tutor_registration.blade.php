@@ -16,7 +16,7 @@
                     <img class="align-content" src="{{asset('image/logo.jpg')}}" alt="Logo">
                 </div>
                 <div class="login-form">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" >
                         @csrf
                         <div class="form-group">
                             <label>Name*</label>

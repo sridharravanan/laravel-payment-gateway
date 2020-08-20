@@ -20,7 +20,18 @@ Auth::routes();
 Route::group([
     'middleware' => 'auth:web'
 ], function () {
+    //#uploads
+    Route::post('/upload', 'UploadController@upload');
+    Route::delete('/upload', 'UploadController@delete');
+    
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/category', 'CategoryController@index');
+
+    //post
+    Route::get('post/grid', 'PostController@getPost');
+    Route::post('/post/get-reference', 'PostController@getReference');
+    Route::delete('/post/post-tutor/{id}', 'API\PostController@deletePostTutor');
+    Route::apiResource('post', 'PostController');
+
 });
 

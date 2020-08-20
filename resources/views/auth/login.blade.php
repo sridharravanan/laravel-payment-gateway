@@ -27,7 +27,7 @@
                         </span>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-success btn-block m-b-30 m-t-30">Sign in</button>
+                <button type="submit" class="btn btn-primary btn-block m-b-30 m-t-30">Sign in</button>
                 <div class="register-link  mt-1">
                     <div class="row">
                         <div class="col-lg-6"><a  href="{{ route('register') }}"> Student Sign Up</a></p></div>

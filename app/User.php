@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\Role;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -48,4 +49,10 @@ class User extends Authenticatable
             'phone_number' => ['required', 'numeric','digits:10', 'unique:users'],
         ];
     }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
 }

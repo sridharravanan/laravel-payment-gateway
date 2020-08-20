@@ -18,6 +18,7 @@
             <div id="app">
                 @include('includes.top_bar')
                 @yield('content')
+                <vue-snotify></vue-snotify>
             </div>
             <!-- .content -->
         </div>
