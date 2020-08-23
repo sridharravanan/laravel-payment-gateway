@@ -61,7 +61,7 @@ Vue.component('form-post', {
         }
     },
     computed: {
-        getOtherTutorAmount(){
+        amount(){
             let post_tutors =  this.form.post_tutors;
             let amount =  isNaN(parseFloat(this.form.amount))?0:parseFloat(this.form.amount);
             if( post_tutors.length > 0 ){
@@ -70,7 +70,6 @@ Vue.component('form-post', {
                     post_tutors[index].amount = (amount==0)?0:(amount/length).toFixed(2);
                 }
             }
-
         },
     },
     created(){
@@ -138,6 +137,7 @@ Vue.component('form-post', {
                 post_tutors             :   [],
                 post_pdf_id          :   null,
                 post_pdf             :   null,
+                amount               :  0
 
             };
         },

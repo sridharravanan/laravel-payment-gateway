@@ -17,7 +17,7 @@
                 </li>
                 @role('tutor')
                 <li>
-                    <a href="/post"> <i class="menu-icon fa fa-upload"></i>Post </a>
+                    <a href="/post"> <i class="menu-icon fa fa-book"></i>Post </a>
                 </li>
                 @endrole
                 @role('admin')

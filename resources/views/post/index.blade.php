@@ -130,6 +130,8 @@
                                         </div>
                                         <div class="col-lg-3">
                                             <div class="form-group">
+                                                <!--<input type="text" id="result" v-model="amount">-->
+                                                @{{amount}}
                                                 <label>Amount*</label>
                                                 <input type="text" placeholder="Name" class="form-control" v-bind:class="{ 'is-invalid' : formErrors.$errors.has('amount') }" v-model="form.amount">
                                                 <div class="invalid-feedback" v-show="formErrors.$errors.has('amount')">
@@ -140,7 +142,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            @{{getOtherTutorAmount}}
+
                                             <div class="card">
                                                 <div class="card-header">
                                                     <strong class="card-title">Other Tutor's <span class=" float-right mt-1"><button type="button" class="btn btn-warning" @click="addTutor"><i class="fa fa-plus"></i>&nbsp; Add</button></span></strong>

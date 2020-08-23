@@ -6,6 +6,5 @@
 
 <script src="{{asset('js/main.js')}}"></script>
 <script src="{{ asset('js/app.js') }}" defer></script>
-<script src="{{ asset('vendors/croppie/croppie.min.js') }}"></script>
 <!-- Scripts -->
 

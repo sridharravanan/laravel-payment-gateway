@@ -54,5 +54,13 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class);
     }
+    /**
+     * @param  $role
+     * @return user count int.
+     * */
+    public static function getUserCountBasedOnRole( $role ){
+        return User::leftJoin('role_user', 'users.id', '=', 'role_user.user_id')->leftJoin('roles', 'roles.id', '=', 'role_user.role_id')
+            ->where('roles.slug',$role)->count();
+    }
 
 }

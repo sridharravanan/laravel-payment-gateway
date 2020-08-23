@@ -6,13 +6,13 @@
 
             <!-- CSRF Token -->
             <meta name="csrf-token" content="{{ csrf_token() }}">
-
             <title>{{ config('app.name') }}</title>
             @include('includes.head')
         </head>
     <body>
         @include('includes.sidebar')
         <!-- Right Panel -->
+
         <div id="right-panel" class="right-panel">
             <!--vue js mounted..!-->
             <div id="app">
@@ -23,8 +23,7 @@
             <!-- .content -->
         </div>
         <!-- Right Panel -->
-
-        @stack('scripts')
         @include('includes.footer')
+        @stack('scripts')
     </body>
     </html>

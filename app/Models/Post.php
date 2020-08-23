@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Post extends Model
 {
@@ -26,5 +28,14 @@ class Post extends Model
     public function subCategory()
     {
         return $this->belongsTo(SubCategory::class,'sub_category_id','id')->with(['category']);
+    }
+
+    public function tutor()
+    {
+        return $this->belongsTo(User::class,'user_id','id');
+    }
+
+    public static function decimalAutoFill($amount, $decimalPlace = 2){
+        return number_format($amount, $decimalPlace, '.','');
     }
 }

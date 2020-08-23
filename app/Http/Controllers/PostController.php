@@ -143,7 +143,8 @@ class PostController extends Controller
                 foreach ($data['post_tutors'] as $key => $item ){
                     $item['post_id'] = $post->id;
                     if( isset($item['id']) && !is_null($item['id']) ){
-                        PostTutors::update($item);
+                        $postTutor = PostTutors::findOrFail($item['id']);
+                        $postTutor->update($item);
                     }else{
                         PostTutors::create($item);
                     }
@@ -164,7 +165,8 @@ class PostController extends Controller
     {
         //
     }
-    public function deletePostTutor(PostTutors $postTutors){
+    public function deletePostTutor(Request $request,$id){
+        $postTutors = PostTutors::findOrFail($id);
         if($postTutors->delete()){
             return response()->json([], 201);
         }
