@@ -13,11 +13,16 @@
         <div id="main-menu" class="main-menu collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a href="#"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
+                    <a href="/dashboard"> <i class="menu-icon fa fa-dashboard"></i>Dashboard </a>
                 </li>
                 @role('tutor')
                 <li>
                     <a href="/post"> <i class="menu-icon fa fa-upload"></i>Post </a>
+                </li>
+                @endrole
+                @role('admin')
+                <li>
+                    <a href="/tutor"> <i class="menu-icon fa fa-group"></i>Tutor </a>
                 </li>
                 @endrole
             </ul>

@@ -22,8 +22,9 @@ Route::group([
 ], function () {
     //#uploads
     Route::post('/upload', 'UploadController@upload');
-    Route::delete('/upload', 'UploadController@delete');
-    
+    Route::delete('/upload/{id}', 'UploadController@destroy');
+
+
     Route::get('/home', 'HomeController@index')->name('home');
     Route::get('/category', 'CategoryController@index');
 
@@ -33,5 +34,9 @@ Route::group([
     Route::delete('/post/post-tutor/{id}', 'API\PostController@deletePostTutor');
     Route::apiResource('post', 'PostController');
 
+
+    Route::get('/dashboard', 'DashboardController@index');
+    Route::get('tutor/grid', 'TutorController@getTutor');
+    Route::apiResource('tutor', 'TutorController');
 });
 

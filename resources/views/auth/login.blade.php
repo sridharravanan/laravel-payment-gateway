@@ -4,7 +4,7 @@
 <div class="container">
     <div class="login-content">
         <div class="login-logo">
-            <img class="align-content" src="{{asset('image/logo.jpg')}}" alt="Logo">
+            <img class="align-content" src="{{asset('image/login.jpg')}}" alt="Logo">
         </div>
         <div class="login-form">
             <form method="POST" action="{{ route('login') }}">

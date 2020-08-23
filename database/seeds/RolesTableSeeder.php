@@ -28,6 +28,12 @@ class RolesTableSeeder extends Seeder
                 'description' => 'Student Role',
                 'level'       => 0,
             ],
+            [
+                'name'        => 'Admin',
+                'slug'        => 'admin',
+                'description' => 'Admin Role',
+                'level'       => 5,
+            ],
         ];
 
         /*
@@ -37,7 +43,7 @@ class RolesTableSeeder extends Seeder
         foreach ($RoleItems as $RoleItem) {
             $newRoleItem = config('roles.models.role')::where('slug', '=', $RoleItem['slug'])->first();
             if ($newRoleItem === null) {
-                $newRoleItem = config('roles.models.role')::create([
+                config('roles.models.role')::create([
                     'name'          => $RoleItem['name'],
                     'slug'          => $RoleItem['slug'],
                     'description'   => $RoleItem['description'],

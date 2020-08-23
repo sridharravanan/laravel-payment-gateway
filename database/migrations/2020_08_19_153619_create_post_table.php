@@ -26,6 +26,8 @@ class CreatePostTable extends Migration
             $table->unsignedBigInteger('front_image_id')->nullable();
             $table->foreign('front_image_id')->references('id')->on('uploads')->onDelete('restrict');
             $table->double('amount', null, 2);
+            $table->unsignedBigInteger('post_pdf_id');
+            $table->foreign('post_pdf_id')->references('id')->on('uploads')->onDelete('restrict');
             $table->timestamps();
             $table->softDeletes();
         });

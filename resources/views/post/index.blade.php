@@ -12,6 +12,15 @@
 <manage-post inline-template>
     <div>
         <div class="content mt-3">
+            @if(is_null(Auth::user()->razorpay_id))
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-danger" role="alert">
+                            Contact Admin to assign razorpay,then only you can make post
+                        </div>
+                    </div>
+                </div>
+            @else
             <div class="row" v-if="!displayForm">
                 <div class="col-md-12">
                     <div class="card">
@@ -68,8 +77,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="row">
-                                    <div class="col-lg-7"><strong class="card-title">Post</strong></div>
-
+                                    <div class="col-lg-11"><strong class="card-title">@{{formTitle}} Post</strong></div>
+                                    <div class="col-lg-1"><button type="button" class="btn btn-primary" @click="showGrid">Manage</button></div>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -131,26 +140,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12">
-                                            <label>Front Cover(Only Image File)</label>
-                                            <file-pond
-                                                name="attachment"
-                                                key="attachment"
-                                                ref="pond"
-                                                class-name="my-pond"
-                                                label-idle="Drop files here..."
-                                                allowMultiple="false"
-                                                image-preview-height = "200"
-                                                allow-image-preview ="true"
-                                                accepted-file-types="image/*"
-                                                :server="filePondOptions"
-                                                v-on:processfile="onFileUploadComplete"
-                                                :allow-revert = "true"
-                                            ></file-pond>
-
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-12">
+                                            @{{getOtherTutorAmount}}
                                             <div class="card">
                                                 <div class="card-header">
                                                     <strong class="card-title">Other Tutor's <span class=" float-right mt-1"><button type="button" class="btn btn-warning" @click="addTutor"><i class="fa fa-plus"></i>&nbsp; Add</button></span></strong>
@@ -191,7 +181,7 @@
                                                             </td>
                                                             <td>
                                                                 <input type="text" placeholder="Amount"
-                                                                       v-bind:class="{ 'is-invalid' : formErrors.$errors.has('post_tutors.'+index+'.amount') }"
+                                                                       v-bind:class="{ 'is-invalid' : formErrors.$errors.has('post_tutors.'+index+'.amount') }" :disabled="true"
                                                                        class="form-control" v-model="post_tutor.amount">
                                                                 <div class="invalid-feedback" v-show="formErrors.$errors.has('post_tutors.'+index+'.amount')">
                                                                     @{{ formErrors.$errors.first('post_tutors.'+index+'.amount') }}
@@ -209,12 +199,85 @@
                                     </div>
 
                                     <div class="row">
+                                        <div class="col-lg-6">
+                                            <label>Front Cover(Only Image File)</label>
+                                            <!--<file-pond
+                                                v-if="form.front_image_id == null"
+                                                name="attachment"
+                                                key="attachment"
+                                                ref="pond"
+                                                class-name="my-pond"
+                                                label-idle="Drop files here..."
+                                                allowMultiple="false"
+                                                image-preview-height = "200"
+                                                allow-image-preview ="true"
+                                                accepted-file-types="image/*"
+                                                :server="filePondOptions"
+                                                v-on:processfile="onFileUploadComplete"
+                                                :allow-revert = "true"
+                                            ></file-pond>-->
+                                            <div v-if="form.front_image_id == null">
+                                                <button type="button"  @click="toggleCropperShow" class="btn btn-outline-secondary btn-lg btn-block"><i class="fa fa-upload"></i>&nbsp; Click Here To Upload Image</button>
+                                                <my-upload field="attachment"
+                                                           @crop-upload-success="cropUploadSuccess"
+                                                           @crop-upload-fail="cropUploadFail"
+                                                           v-model="fileCropperShow"
+                                                           :width="150"
+                                                           :height="150"
+                                                           url="/upload"
+                                                           :headers="filePondOptions.process.headers"
+                                                           lang-type="en"
+                                                           img-format="png"></my-upload>
+                                            </div>
+                                            <div class="card" v-else>
+                                                <div class="card-header">
+                                                    <strong class="card-title pl-2">@{{form.front_image.file_name}}
+                                                        <button type="button" class="btn btn-outline-danger btn-sm float-right" @click="onDeleteFrontImage(false)"><i class="fa fa-times"></i></button>
+                                                    </strong>
+                                                </div>
+                                                <div class="card-body">
+                                                    <img class="rounded mx-auto d-block" :src="form.front_image.uploaded_path | bindImage" alt="Front Image">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 ">
+                                            <label>Pdf(Only Pdf)</label>
+                                            <file-pond
+                                                v-if="form.post_pdf_id == null"
+                                                name="attachment"
+                                                key="attachment"
+                                                ref="pond"
+                                                class-name="my-pond "
+                                                label-idle="Drop files here..."
+                                                allowMultiple="false"
+                                                allow-image-preview ="true"
+                                                accepted-file-types="application/pdf"
+                                                :server="filePondOptions"
+                                                v-on:processfile="onPdfUploadComplete"
+                                                :allow-revert = "true"
+                                            ></file-pond>
+                                            <div class="card " v-else>
+                                                <div class="card-header">
+                                                    <strong class="card-title pl-2">@{{form.post_pdf.file_name}}
+                                                        <button type="button" class="btn btn-outline-danger btn-sm float-right" @click="onDeleteFrontImage(true)"><i class="fa fa-times"></i></button>
+                                                    </strong>
+                                                </div>
+                                                <div class="card-body">
+                                                    <embed type="application/pdf" :src="form.post_pdf.uploaded_path | bindImage"  height="200">
+                                                </div>
+                                            </div>
+                                            <div class="custom-invalid-feedback" v-show="formErrors.$errors.has('post_pdf_id')">
+                                                @{{ formErrors.$errors.first('post_pdf_id') }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
                                         <div class="col-lg-12">
                                             <label>Description</label>
                                             <vue-editor v-model="form.description"></vue-editor>
                                         </div>
                                     </div>
-
                                     <div class="row mt-2">
                                         <div class="col-lg-12 ">
                                             <button type="button" class="btn btn-primary" @click="submit">Save</button>
@@ -229,7 +292,7 @@
                     </div>
                 </form-post>
             </div>
-
+            @endif
         </div>
     </div>
 </manage-post>

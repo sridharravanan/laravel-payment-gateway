@@ -11,6 +11,7 @@ import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond/dist/filepond.min.css';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
+import myUpload from 'vue-image-crop-upload';
 
 const FilePond = vueFilePond(FilePondPluginFileValidateType, FilePondPluginImagePreview);
 let filePondOptions = {
@@ -42,6 +43,7 @@ Vue.component('form-post', {
         VueEditor,
         'v-select':VueSelect,
         FilePond,
+        'my-upload': myUpload
     },
     data(){
         return {
@@ -54,7 +56,22 @@ Vue.component('form-post', {
             sub_category_options: [],
             sub_category: null,
             formErrors : new Form(),
+            formTitle : "Create",
+            fileCropperShow:false
         }
+    },
+    computed: {
+        getOtherTutorAmount(){
+            let post_tutors =  this.form.post_tutors;
+            let amount =  isNaN(parseFloat(this.form.amount))?0:parseFloat(this.form.amount);
+            if( post_tutors.length > 0 ){
+                let length = post_tutors.length + 1;
+                for( var index in post_tutors ){
+                    post_tutors[index].amount = (amount==0)?0:(amount/length).toFixed(2);
+                }
+            }
+
+        },
     },
     created(){
 
@@ -62,9 +79,36 @@ Vue.component('form-post', {
     },
     mounted() {
         this.getReferenceData();
-
+        if( this.$parent.currentRecord  != null){
+            this.formTitle = "Update";
+            let currentRecord = this.$parent.currentRecord;
+            console.log(currentRecord);
+            console.log(currentRecord.id);
+            this.form.id = currentRecord.id;
+            this.form.name = currentRecord.name;
+            this.form.description = currentRecord.description;
+            this.form.amount = currentRecord.amount;
+            this.form.sub_category_id = currentRecord.sub_category_id;
+            this.form.front_image_id = currentRecord.front_image_id;
+            this.form.front_image = currentRecord.front_image;
+            this.form.post_pdf_id = currentRecord.post_pdf_id;
+            this.form.post_pdf = currentRecord.post_pdf;
+            this.form.post_tutors = currentRecord.post_tutors;
+            this.category = currentRecord.sub_category.category;
+            this.sub_category = currentRecord.sub_category;
+        }
     },
     methods : {
+        toggleCropperShow() {
+            this.fileCropperShow = !this.fileCropperShow;
+        },
+        cropUploadSuccess(jsonData, field){
+            this.form.front_image_id = jsonData['id'];
+            this.form.front_image = jsonData;
+        },
+        cropUploadFail(status, field){
+            swal("Error while Upload")
+        },
         getReferenceData(){
             this.isLoading = true;
             axios.post('/post/get-reference', {})
@@ -91,13 +135,21 @@ Vue.component('form-post', {
                 sub_category_id         :   null,
                 front_image_id          :   null,
                 front_image             :   null,
-                post_tutors             :   []
+                post_tutors             :   [],
+                post_pdf_id          :   null,
+                post_pdf             :   null,
+
             };
         },
-        onFileUploadComplete(error, fileObject){
+        /*onFileUploadComplete(error, fileObject){
             let file_details = JSON.parse(fileObject.serverId);
             this.form.front_image_id = file_details['id'];
             this.form.front_image = file_details;
+        },*/
+        onPdfUploadComplete(error, fileObject){
+            let file_details = JSON.parse(fileObject.serverId);
+            this.form.post_pdf_id = file_details['id'];
+            this.form.post_pdf = file_details;
         },
         showGrid(){
             this.$parent.showGrid();
@@ -105,9 +157,11 @@ Vue.component('form-post', {
         submit() {
             this.isLoading = true;
             this.assignForm();
-            this.formErrors.post('/post', this.form)
+            let method = (this.form.id == null )?this.formErrors.post('/post', this.form):this.formErrors.put('/post/'+this.form.id
+                , this.form);
+            method
                 .then(response => {
-                    this.$snotify.success(response.name, 'saved!');
+                    this.$snotify.success(response, 'saved!');
                     this.showGrid();
                 })
                 .catch(error => {
@@ -124,6 +178,10 @@ Vue.component('form-post', {
             this.form.front_image_id = null;
             if( this.form.front_image != null ){
                 this.form.front_image_id = this.form.front_image.id;
+            }
+            this.form.post_pdf_id = null;
+            if( this.form.post_pdf != null ){
+                this.form.post_pdf_id = this.form.post_pdf.id;
             }
             let post_tutors = this.form.post_tutors;
             if( post_tutors.length > 0 ){
@@ -173,13 +231,13 @@ Vue.component('form-post', {
                 if (willDelete) {
                     let removeFromArray = ()=>{
                         this.form.post_tutors.splice(index, 1);
-                        swal("Tutor removed from this tutor!", 'Deleted');
+                        swal("Tutor removed from this post!", 'Deleted');
                     };
                     let id = this.form.post_tutors[index].id;
                     if(id != null || id != undefined){
                         this.isLoading = true;
                         //existing record, so we have to delete it from server!
-                        axios.delete('/standard/standard-section/'+id)
+                        axios.delete('/post/post-tutor/'+id)
                             .then((reason)=>{
                             removeFromArray();
                         }).catch((reason)=>{
@@ -190,6 +248,47 @@ Vue.component('form-post', {
                     }else{
                         removeFromArray();
                     }
+                }
+            });
+        },
+        onDeleteFrontImage(isPdf){
+            let alertMessage = "Do you want to delete this front image...!";
+            if( isPdf )
+                alertMessage = "Do you want to delete this pdf...!"
+
+            swal({
+                title: "Are you sure?",
+                text: alertMessage,
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                if (willDelete) {
+                    let removeFromArray = ()=>{
+                        if( isPdf ){
+                            this.form.post_pdf_id = null;
+                            this.form.post_pdf = null;
+                            swal("Pdf removed successfully!", 'Deleted');
+                        }else{
+                            this.form.front_image_id = null;
+                            this.form.front_image = null;
+                            swal("Front image removed successfully!", 'Deleted');
+                        }
+
+                    };
+                    removeFromArray();
+                    //#todo need to remove it from server
+                   /* this.isLoading = true;
+                    axios.delete('/upload/'+this.form.front_image_id)
+                        .then((reason)=>{
+                        removeFromArray();
+                    }).catch((reason)=>{
+                            this.$snotify.error(reason.message, 'Error!');
+                    }).finally(()=>{
+                            this.isLoading = false;
+                    })*/
+
                 }
             });
         }

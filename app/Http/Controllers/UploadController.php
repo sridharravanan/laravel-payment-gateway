@@ -83,7 +83,9 @@ class UploadController extends Controller
      */
     public function destroy(Uploads $uploads)
     {
-        //
+        Storage::delete($uploads->uploaded_path);
+        $uploads->delete();
+        return response()->json("Deleted successfully",200);
     }
     public function upload(Request $request){
         $data = $request->all();
@@ -99,8 +101,9 @@ class UploadController extends Controller
             return response()->json($upload, 200);
         return response()->json('', 500);
     }
-    public function delete(Request $request){
+    /*public function delete(Request $request){
         $uploadData = (array)json_decode($request->getContent());
+        print_r($uploadData);exit;
         if( isset($uploadData['id']) ){
             $upload = Uploads::findOrFail($uploadData['id']);
             Storage::delete($upload->uploaded_path);
@@ -108,5 +111,5 @@ class UploadController extends Controller
             return response()->json("Deleted successfully",200);
         }
         return response()->json("File id does not exit's",501);
-    }
+    }*/
 }

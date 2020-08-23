@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\PostTutors;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
@@ -31,8 +32,12 @@ class PostController extends Controller
     public function  getPost(Request $request)
     {
         self::hasRole(Config::get('constants.role.slug_tutor.slug'));
-        $query = Post::query()->select('post.*');
-        return Pagination::preparePagination($query,$request,['post.name','post.description']);
+        $query = Post::query()->select('post.*','sub_category.name as sub_category_name','category.name as category_name')
+            ->leftJoin('sub_category', 'sub_category.id', '=', 'post.sub_category_id')
+            ->leftJoin('category', 'category.id', '=', 'sub_category.category_id')
+            ->where('post.user_id',Auth::id())
+        ;
+        return Pagination::preparePagination($query,$request,['post.name','sub_category.name','category.name','post.description']);
     }
     /**
      * Return dropdown values.
@@ -42,7 +47,7 @@ class PostController extends Controller
     public function getReference(Request $request){
         $reference = [
             "category"  => Category::with('subCategory')->get(),
-            "tutors"    => User::whereHas('roles', function($q){$q->where('name', Config::get('constants.role.slug_tutor.slug'));})->get(),
+            "tutors"    => User::whereNotIn('id',[Auth::id()])->whereHas('roles', function($q){$q->where('name', Config::get('constants.role.slug_tutor.slug'));})->get(),
 
         ];
         return $reference;
@@ -69,6 +74,7 @@ class PostController extends Controller
             'name'  => 'required|unique:post,name',
             'sub_category_id'  => 'required|numeric',
             'amount'  => 'required|numeric|gt:0|regex:/^\d+(\.\d{1,2})?$/',
+            'post_pdf_id'  => 'required|numeric',
             'post_tutors.*.tutor_id' => 'required|numeric',
             'post_tutors.*.amount' => 'required|numeric|gt:0|regex:/^\d+(\.\d{1,2})?$/',
         ]);
@@ -97,6 +103,8 @@ class PostController extends Controller
     {
         $post->postTutors;
         $post->frontImage;
+        $post->postPdf;
+        $post->subCategory;
         return $post;
     }
 
@@ -120,7 +128,30 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $request->validate([
+            'name'  => 'required|unique:post,name,'.$post['id'],
+            'sub_category_id'  => 'required|numeric',
+            'amount'  => 'required|numeric|gt:0|regex:/^\d+(\.\d{1,2})?$/',
+            'post_pdf_id'  => 'required|numeric',
+            'post_tutors.*.tutor_id' => 'required|numeric',
+            'post_tutors.*.amount' => 'required|numeric|gt:0|regex:/^\d+(\.\d{1,2})?$/',
+        ]);
+        $message = DB::transaction(function() use ($request,$post) {
+            $data = $request->all();
+            $post->update($data);
+            if( isset($data['post_tutors']) && count($data['post_tutors']) > 0 ){
+                foreach ($data['post_tutors'] as $key => $item ){
+                    $item['post_id'] = $post->id;
+                    if( isset($item['id']) && !is_null($item['id']) ){
+                        PostTutors::update($item);
+                    }else{
+                        PostTutors::create($item);
+                    }
+                }
+            }
+            return $post['name']." post has been updated";
+        });
+        return response()->json($message, 200);
     }
 
     /**

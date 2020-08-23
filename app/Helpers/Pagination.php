@@ -30,16 +30,17 @@ class Pagination
         }
         // search
         if ($request->exists('filter')) {
-            $value = "%{$request->filter}%";
-            if( count($filterColumns) > 0 ){
-                foreach ($filterColumns as $key => $column ){
+            $query->where(function($q) use($request, $filterColumns) {
+                $value = "%{$request->filter}%";
+                foreach ($filterColumns as $key => $column){
                     if($key == 0){
-                        $query->where($column, 'like', $value);
+                        $q->where($column, 'like', $value);
                     }else{
-                        $query->orWhere($column, 'like', $value);
+                        $q->orWhere($column, 'like', $value);
                     }
                 }
-            }
+            });
+
         }
         // list per page
         $perPage = $request->has('per_page') ? (int) $request->per_page : null;

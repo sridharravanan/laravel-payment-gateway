@@ -11,6 +11,8 @@ Vue.component('form-tutor', {
             form : this.getFormData(),
             isLoading : false,
             errors: [],
+            adminMode : false,
+            formTitle : "Edit"
         }
     },
     created(){
@@ -18,7 +20,17 @@ Vue.component('form-tutor', {
 
     },
     mounted() {
-
+        this.adminMode = false;
+        //#admin approval
+        if( this.$parent.currentRecord  != undefined && this.$parent.currentRecord != null ){
+            this.adminMode = true;
+            let currentRecord =  this.$parent.currentRecord;
+            this.form.id = currentRecord.id;
+            this.form.name = currentRecord.name;
+            this.form.email = currentRecord.email;
+            this.form.phone_number = currentRecord.phone_number;
+            this.form.razorpay_id = currentRecord.razorpay_id;
+        }
 
     },
     methods : {
@@ -30,17 +42,22 @@ Vue.component('form-tutor', {
                 phone_number            :   '',
                 password                :   '',
                 password_confirmation   :   '',
+                razorpay_id   :   null,
             };
         },
         showGrid(){
             this.form = this.getFormData();
+            if( this.adminMode ){
+                this.$parent.showGrid();
+            }
         },
         submit() {
             this.isLoading = true;
-            axios.post('/tutor-save', {})
+            let method = (this.form.id == null )? axios.post('/tutor-save', this.form) : axios.put('/tutor/'+this.form.id, this.form);
+            method
                 .then(response => {
                     this.errors = [];
-                    this.$snotify.success(response.name, 'saved!');
+                    this.$snotify.success(response.data, 'saved!');
                     this.showGrid();
                 })
                 .catch(error => {

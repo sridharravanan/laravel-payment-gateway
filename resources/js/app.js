@@ -22,13 +22,19 @@ window.Vue = require('vue');
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 //#block for include vue js.
+require('./components/__global/filters');
+
+require('./components/dashboard/manage-dashboard');
 //#tutor
+require('./components/tutor/manage-tutor');
 require('./components/tutor/form-tutor');
 //#category
 require('./components/category/manage-category');
 //#post
 require('./components/post/manage-post');
 require('./components/post/form-post');
+
+
 
 
 //global declaration
