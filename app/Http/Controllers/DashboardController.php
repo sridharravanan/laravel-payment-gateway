@@ -43,7 +43,7 @@ class DashboardController extends Controller
 
         ;
         $query->with(['frontImage','postPdf','tutor']);
-        return Pagination::preparePagination($query,$request,['post.name','sub_category.name','category.name','post.description']);
+        return Pagination::preparePagination($query,$request,['post.name','sub_category.name','category.name']);
     }
     /**
      * create a payment

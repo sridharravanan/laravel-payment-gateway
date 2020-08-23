@@ -15,12 +15,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col-lg-7"><strong class="card-title">All Post</strong></div>
-                            </div>
-                        </div>
                         <div class="card-body">
+                            @include('__global.loading')
                             <div class="row">
                                 <div class="col-lg-4">
                                     <div class="card">
@@ -66,49 +62,65 @@
 
                             </div>
                             <div class="row">
-                                <div class="col-lg-12" v-if="postLists.length == 0">
-                                    <div class="alert alert-danger" role="alert">
-                                        There is no post..!
+                                <div class="col-lg-12">
+                                    <div class="card-header">
+                                        <div class="row">
+                                            <div class="col-lg-7"><strong class="card-title">Post</strong></div>
+                                            <div class="col-lg-5">
+                                                @include('__global.search_bar')
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <input  type="hidden"   id="user_data" value="{{$user_data}}" >
-                                <input  type="hidden"  id="razorpay_key" value="{{$razorpay_key}}">
-                                <div class="col-lg-3" v-for="( post,index ) in postLists">
-                                    <div class="card">
-                                        <img class="card-img-top" :src="post.front_image.uploaded_path | bindImage" alt="post.name">
-                                        <div class="card-body">
-                                            <h4 class="card-title">@{{post.name}}</h4>
-                                            <hr class="m-1">
-                                            <p class="m-1">
-                                                <small>Author -<b>@{{post.tutor.name}}</b></small></br>
-                                                <small>Category -<b>@{{post.category_name}}</b></small>
-                                            </p>
-                                            <button type="button" v-if="post.payment_id == null" :data-author="post.name" :data-id="post.id" :data-amount="post.amount" class="btn btn-outline-danger btn-lg btn-block buy_now"> <i class="fa fa-download"></i>&nbsp;BUY Rs.@{{post.amount}}</button>
-                                            <a target="_blank" :href="post.post_pdf.uploaded_path | bindImage"  v-else class="btn btn-outline-danger btn-lg btn-block"> <i class="fa fa-download"></i>&nbsp;Download</a>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-lg-12" v-if="postLists.length == 0">
+                                                <div class="alert alert-danger" role="alert">
+                                                    There is no post..!
+                                                </div>
+                                            </div>
+                                            <input  type="hidden"   id="user_data" value="{{$user_data}}" >
+                                            <input  type="hidden"  id="razorpay_key" value="{{$razorpay_key}}">
+                                            <div class="col-lg-3" v-for="( post,index ) in postLists">
+                                                <div class="card">
+                                                    <img class="card-img-top" :src="post.front_image.uploaded_path | bindImage" alt="post.name">
+                                                    <div class="card-body">
+                                                        <h4 class="card-title">@{{post.name}}</h4>
+                                                        <hr class="m-1">
+                                                        <p class="m-1">
+                                                            <small>Author -<b>@{{post.tutor.name}}</b></small></br>
+                                                            <small>Category -<b>@{{post.category_name}}</b></small>
+                                                        </p>
+                                                        <button type="button" v-if="checkPaymentStatus(index)" :data-author="post.name" :data-id="post.id" :data-amount="post.amount" class="btn btn-outline-danger btn-lg btn-block buy_now"> <i class="fa fa-download"></i>&nbsp;BUY Rs.@{{post.amount}}</button>
+                                                        <a target="_blank" :href="post.post_pdf.uploaded_path | bindImage"  v-else class="btn btn-outline-danger btn-lg btn-block"> <i class="fa fa-download"></i>&nbsp;Download</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row"  v-if="postLists.length != 0">
+                                            <div class="col-sm-12">
+                                                <div class="dataTables_paginate paging_simple_numbers pull-right">
+                                                    <paginate
+                                                        v-model="currentPage"
+                                                        :page-count="totalPage"
+                                                        :page-range="3"
+                                                        :margin-pages="2"
+                                                        :click-handler="getAllPost"
+                                                        :prev-text="previousButton"
+                                                        :next-text="nextButton"
+                                                        :container-class="'pagination'"
+                                                        :page-class="'paginate_button page-item'"
+                                                        :page-link-class="'page-link'"
+                                                    >
+                                                    </paginate>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
                             </div>
-                            <div class="row"  v-if="postLists.length != 0">
-                                <div class="col-sm-12">
-                                    <div class="dataTables_paginate paging_simple_numbers pull-right">
-                                        <paginate
-                                            v-model="currentPage"
-                                            :page-count="totalPage"
-                                            :page-range="3"
-                                            :margin-pages="2"
-                                            :click-handler="getAllPost"
-                                            :prev-text="previousButton"
-                                            :next-text="nextButton"
-                                            :container-class="'pagination'"
-                                            :page-class="'paginate_button page-item'"
-                                            :page-link-class="'page-link'"
-                                        >
-                                        </paginate>
-                                    </div>
-                                </div>
-                            </div>
+
 
                         </div>
                     </div>

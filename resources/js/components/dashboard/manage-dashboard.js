@@ -21,7 +21,11 @@ Vue.component('manage-dashboard', {
                 total_students  : 0,
                 total_tutors    : 0,
                 total_posts     : 0,
-            }
+            },
+            vueTableParams : {
+              filters : ''
+            },
+            isLoading: false,
 
         };
     },
@@ -34,14 +38,23 @@ Vue.component('manage-dashboard', {
     },
     mounted(){
         this.additionalData();
-        this.getAllPost(1);
+        this.getAllPost();
     },
     computed:{
 
     },
     methods : {
+        reloadRefresh(){
+            this.currentPage = 1;
+            this.getAllPost();
+        },
+        clearDataTable(){
+            this.vueTableParams.filter = '';
+            this.reloadRefresh();
+        },
         additionalData(){
             let self = this;
+            self.isLoading = true;
             axios.post('/dashboard/additional-data', {})
                 .then(function (response) {
                     let responceData = response.data;
@@ -51,15 +64,18 @@ Vue.component('manage-dashboard', {
                 })
                 .catch(function (error) {
                     console.log(error);
+                }).finally(function (responce) {
+                    self.isLoading = false;
                 })
         },
         getAllPost() {
             let self = this;
+            self.isLoading = true;
             axios.get('/dashboard/grid', {
                     params: {
                         page: self.currentPage,
                         per_page:self.per_page,
-                        filter:""
+                        filter:self.vueTableParams.filter
                     }
                 })
                 .then(function (response) {
@@ -69,10 +85,20 @@ Vue.component('manage-dashboard', {
                 })
                 .catch(function (error) {
                     console.log(error);
+                }).finally(function (responce) {
+                    self.isLoading = false;
                 })
         },
-
-
+        checkPaymentStatus(index){
+            let post = this.postLists[index];
+            let logedUser = JSON.parse($("#user_data").val());
+            if( post.payment_id == null ){
+                //#check its not owner...!
+                if( logedUser.id != post.user_id )
+                    return true
+            }
+            return false;
+        }
 
 
     }
