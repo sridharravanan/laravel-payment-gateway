@@ -47,7 +47,7 @@ class PostController extends Controller
     public function getReference(Request $request){
         $reference = [
             "category"  => Category::with('subCategory')->get(),
-            "tutors"    => User::whereNull('razorpay_id')->whereNotIn('id',[Auth::id()])->whereHas('roles', function($q){$q->where('name', Config::get('constants.role.slug_tutor.slug'));})->get(),
+            "tutors"    => User::whereNotNull('razorpay_id')->whereNotIn('id',[Auth::id()])->whereHas('roles', function($q){$q->where('name', Config::get('constants.role.slug_tutor.slug'));})->get(),
 
         ];
         return $reference;
